@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deploy Website ke Vercel</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #624af2, #8b6cff);
+      display: flex; justify-content: center; align-items: center;
+      height: 100vh; color: white;
+    }
+    .card {
+      background: rgba(255,255,255,0.1);
+      padding: 30px;
+      border-radius: 15px;
+      width: 320px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+    input, button {
+      width: 100%; padding: 10px;
+      border-radius: 10px; margin-top: 10px;
+      border: none; outline: none;
+    }
+    button {
+      background: linear-gradient(90deg, #ffc34a, #ff8a65);
+      color: #000; font-weight: bold;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 15px;
+      background: white;
+      color: black;
+      border-radius: 10px;
+      padding: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>⚡ Website Deploy</h2>
+    <p>Deploy Website ke Vercel dengan Mudah</p>
+    <input id="name" type="text" placeholder="Nama Website (ex: web-aldric)">
+    <input id="file" type="file" accept=".html">
+    <button id="deploy">Deploy Sekarang</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    document.getElementById('deploy').onclick = async () => {
+      const name = document.getElementById('name').value.trim();
+      const file = document.getElementById('file').files[0];
+      const result = document.getElementById('result');
+      if (!file) return alert("Pilih file HTML dulu!");
+      result.style.display = "block";
+      result.innerText = "Sedang deploy...";
+
+      const form = new FormData();
+      form.append("name", name);
+      form.append("file", file);
+
+      const res = await fetch("/api/deploy", { method: "POST", body: form });
+      const data = await res.json();
+
+      if (data.url) {
+        result.innerHTML = `✅ Berhasil!<br>👉 <a href="${data.url}" target="_blank">${data.url}</a>`;
+      } else {
+        result.innerText = "Gagal deploy: " + JSON.stringify(data);
+      }
+    };
+  </script>
+</body>
+</html>
